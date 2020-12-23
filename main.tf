@@ -25,7 +25,7 @@ resource "aws_s3_bucket" "bucket" {
 resource "aws_s3_bucket_policy" "bp" {
   bucket       = aws_s3_bucket.bucket.id
   policy = <<EOF
-  {
+{
       "Version": "2012-10-17",
       "Statement": [
           {
@@ -40,8 +40,8 @@ resource "aws_s3_bucket_policy" "bp" {
               ]
           }
       ]
-  }
-  EOF
+}
+EOF
 }  
 
 resource "aws_s3_bucket_object" "webapp" {
