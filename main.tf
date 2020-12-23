@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+  }
+}
+
 provider "aws" {
   region = var.region
 }
@@ -5,27 +14,6 @@ provider "aws" {
 resource "aws_s3_bucket" "bucket" {
   bucket = "${var.prefix}-${var.name}"
   acl    = "public-read"
-
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "PublicReadGetObject",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::${var.prefix}-${var.name}/*"
-            ]
-        }
-    ]
-}
-EOF
-
   website {
     index_document = "index.html"
     error_document = "error.html"
@@ -33,6 +21,28 @@ EOF
   }
   force_destroy = true
 }
+
+resource "aws_s3_bucket_policy" "bp" {
+  bucket       = aws_s3_bucket.bucket.id
+  policy = <<EOF
+  {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Sid": "PublicReadGetObject",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": [
+                  "s3:GetObject"
+              ],
+              "Resource": [
+                  "arn:aws:s3:::${var.prefix}-${var.name}/*"
+              ]
+          }
+      ]
+  }
+  EOF
+}  
 
 resource "aws_s3_bucket_object" "webapp" {
   acl          = "public-read"
